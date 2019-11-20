@@ -4,17 +4,19 @@ export default class Renderer {
 
   ctx: CanvasRenderingContext2D
   pixelRatio: number
-  zoom: number = 1
-  angle: number = 0
+  zoom: number
+  angle: number
   renderFunc: (ctx: CanvasRenderingContext2D) => void = () => { }
   
   constructor(canvas: HTMLCanvasElement, pixelRatio: number) {
     const context = canvas.getContext('2d')
     if (!context) {
-      throw new Error('can not aquire canvas context!')
+      throw new Error('can not aquire canvas context.')
     }
     this.ctx = context
     this.pixelRatio = pixelRatio
+    this.zoom = 1
+    this.angle = 0
   }
 
   render() {
