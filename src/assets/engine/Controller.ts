@@ -67,8 +67,10 @@ export default class Controller {
 
   private handleMouseMove = (ev: MouseEvent) => {
     if (this.leftDragging) {
-      this.renderer.translation.x += ev.movementX
-      this.renderer.translation.y += ev.movementY
+      this.renderer.translation = {
+        x: this.renderer.translation.x + ev.movementX,
+        y: this.renderer.translation.y + ev.movementY
+      }
     } else if (this.rightDragging) {
       const degree = -ev.movementX / this.renderer.ctx.canvas.width * 180
       const currentDegree = this.renderer.rotation / Math.PI * 180
