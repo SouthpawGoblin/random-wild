@@ -1,4 +1,4 @@
-import { Vec2, Rect } from "./types"
+import { Vec2, Rect, Vec3 } from "./types"
 import Scene from "./Scene"
 import Tile from "./Tile"
 
@@ -75,6 +75,8 @@ export default class Renderer {
   render() {
     this.clear()
     
+    this.renderGrid()
+
     // translate and rotate the canvas
     this.ctx.translate(this._totalTranslation.x, this._totalTranslation.y)
     this.ctx.rotate(this._rotation)
@@ -92,7 +94,7 @@ export default class Renderer {
 
   private clear() {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0)
-    this.ctx.fillStyle = '#aaaaaa'
+    this.ctx.fillStyle = '#eeeeee'
     this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
   }
 
@@ -108,8 +110,28 @@ export default class Renderer {
   }
 
   private renderGrid() {
-    const diagonal = Math.sqrt(Math.pow(this.ctx.canvas.width, 2) + Math.pow(this.ctx.canvas.height, 2))
-    const startX = this._translation.x * Math.cos(this._rotation) + diagonal / 2 * Math.cos(this._rotation)
-    // TODO:
+    const halfDiagonal = Math.sqrt(Math.pow(this.ctx.canvas.width, 2) + Math.pow(this.ctx.canvas.height, 2)) / 2
+    const startX = this.ctx.canvas.width / 2 - halfDiagonal -halfDiagonal % this._tileSize
+    const endX = -startX
+    const startY = startX
+    const endY = -startY
+    const ctx = this.ctx
+    ctx.strokeStyle = '#111111'
+    let y = startY
+    while (y <= endY) {
+      ctx.beginPath()
+      ctx.moveTo(startX, y)
+      ctx.lineTo(endX, y)
+      ctx.stroke()
+      y += this._tileSize
+    }
+    let x = startX
+    while (x <= endX) {
+      ctx.beginPath()
+      ctx.moveTo(x, startY)
+      ctx.lineTo(x, endY)
+      ctx.stroke()
+      x += this._tileSize
+    }
   }
 }
