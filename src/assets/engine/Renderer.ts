@@ -1,4 +1,4 @@
-import { Vec2, Rect, Vec3 } from "./types"
+import { Vec2, Rect } from "./types"
 import Scene from "./Scene"
 import Tile from "./Tile"
 
@@ -75,13 +75,11 @@ export default class Renderer {
   render() {
     this.clear()
     
-    this.renderGrid()
-
     // translate and rotate the canvas
     this.ctx.translate(this._totalTranslation.x, this._totalTranslation.y)
     this.ctx.rotate(this._rotation)
-
-    // render grid
+    
+     // render grid
     this.showGrid && this.renderGrid()
 
     // render scene
@@ -111,27 +109,37 @@ export default class Renderer {
 
   private renderGrid() {
     const halfDiagonal = Math.sqrt(Math.pow(this.ctx.canvas.width, 2) + Math.pow(this.ctx.canvas.height, 2)) / 2
-    const startX = this.ctx.canvas.width / 2 - halfDiagonal -halfDiagonal % this._tileSize
-    const endX = -startX
-    const startY = startX
-    const endY = -startY
+    let startX = this.ctx.canvas.width / 2 - halfDiagonal - halfDiagonal % this._tileSize
+    let endX = -startX + this.ctx.canvas.width
+    let startY = this.ctx.canvas.height / 2 - halfDiagonal - halfDiagonal % this._tileSize
+    let endY = -startY + this.ctx.canvas.height
+    startX -= this._totalTranslation.x - this._translation.x % this._tileSize
+    endX -= this._totalTranslation.x - this._translation.x % this._tileSize
+    startY -= this._totalTranslation.y - this._translation.y % this._tileSize
+    endY -= this._totalTranslation.y - this._translation.y % this._tileSize
     const ctx = this.ctx
     ctx.strokeStyle = '#111111'
-    let y = startY
-    while (y <= endY) {
-      ctx.beginPath()
-      ctx.moveTo(startX, y)
-      ctx.lineTo(endX, y)
-      ctx.stroke()
-      y += this._tileSize
+    let y = (startY + endY) / 2
+    strokeLine(startX, y, endX, y)
+    for (let i = 1; y + i * this._tileSize < endY; i++) {
+      const yDown = y + i * this._tileSize
+      const yUp = y - i * this._tileSize
+      strokeLine(startX, yDown, endX, yDown)
+      strokeLine(startX, yUp, endX, yUp)
     }
-    let x = startX
-    while (x <= endX) {
+    let x = (startX + endX) / 2
+    strokeLine(x, startY, x, endY)
+    for (let i = 1; x + i * this._tileSize < endX; i++) {
+      const xRight = x + i * this._tileSize
+      const xLeft = x - i * this._tileSize
+      strokeLine(xRight, startY, xRight, endY)
+      strokeLine(xLeft, startY, xLeft, endY)
+    }
+    function strokeLine(x1: number, y1: number, x2: number, y2: number) {
       ctx.beginPath()
-      ctx.moveTo(x, startY)
-      ctx.lineTo(x, endY)
+      ctx.moveTo(x1, y1)
+      ctx.lineTo(x2, y2)
       ctx.stroke()
-      x += this._tileSize
     }
   }
 }
