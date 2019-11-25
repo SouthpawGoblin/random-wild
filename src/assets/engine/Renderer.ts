@@ -14,6 +14,7 @@ export default class Renderer {
   private _pixelRatio: number
   private _totalTranslation: Vec2
   private _tileSize: number
+  private _gridLength: number
   
   constructor(canvas: HTMLCanvasElement, scene: Scene, pixelRatio: number) {
     const context = canvas.getContext('2d')
@@ -36,6 +37,7 @@ export default class Renderer {
       y: this.ctx.canvas.height / 2 + this._translation.y
     }
     this._tileSize = this._zoom * this._pixelRatio
+    this._gridLength = 10000
   }
 
   get zoom(): number {
@@ -108,32 +110,22 @@ export default class Renderer {
   }
 
   private renderGrid() {
-    const halfDiagonal = Math.sqrt(Math.pow(this.ctx.canvas.width, 2) + Math.pow(this.ctx.canvas.height, 2)) / 2
-    let startX = this.ctx.canvas.width / 2 - halfDiagonal - halfDiagonal % this._tileSize
-    let endX = -startX + this.ctx.canvas.width
-    let startY = this.ctx.canvas.height / 2 - halfDiagonal - halfDiagonal % this._tileSize
-    let endY = -startY + this.ctx.canvas.height
-    startX -= this._totalTranslation.x - this._translation.x % this._tileSize
-    endX -= this._totalTranslation.x - this._translation.x % this._tileSize
-    startY -= this._totalTranslation.y - this._translation.y % this._tileSize
-    endY -= this._totalTranslation.y - this._translation.y % this._tileSize
     const ctx = this.ctx
     ctx.strokeStyle = '#111111'
-    let y = (startY + endY) / 2
-    strokeLine(startX, y, endX, y)
-    for (let i = 1; y + i * this._tileSize < endY; i++) {
-      const yDown = y + i * this._tileSize
-      const yUp = y - i * this._tileSize
-      strokeLine(startX, yDown, endX, yDown)
-      strokeLine(startX, yUp, endX, yUp)
+    const halfLength = this._gridLength / 2
+    strokeLine(-halfLength, 0, halfLength, 0)
+    for (let i = 1; i * this._tileSize < halfLength; i++) {
+      const yDown = i * this._tileSize
+      const yUp = -yDown
+      strokeLine(-halfLength, yDown, halfLength, yDown)
+      strokeLine(-halfLength, yUp, halfLength, yUp)
     }
-    let x = (startX + endX) / 2
-    strokeLine(x, startY, x, endY)
-    for (let i = 1; x + i * this._tileSize < endX; i++) {
-      const xRight = x + i * this._tileSize
-      const xLeft = x - i * this._tileSize
-      strokeLine(xRight, startY, xRight, endY)
-      strokeLine(xLeft, startY, xLeft, endY)
+    strokeLine(0, -halfLength, 0, halfLength)
+    for (let i = 1; i * this._tileSize < halfLength; i++) {
+      const xRight = i * this._tileSize
+      const xLeft = -xRight
+      strokeLine(xRight, -halfLength, xRight, halfLength)
+      strokeLine(xLeft, -halfLength, xLeft, halfLength)
     }
     function strokeLine(x1: number, y1: number, x2: number, y2: number) {
       ctx.beginPath()
