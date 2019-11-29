@@ -1,6 +1,6 @@
-import { Vec2, Rect } from "./types"
+import { Vec2, Rect } from "../types"
 import Scene from "./Scene"
-import Tile from "./Tile"
+import Tile from "../Tiles/Tile"
 
 export default class Renderer {
 

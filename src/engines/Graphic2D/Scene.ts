@@ -1,4 +1,4 @@
-import Tile from "./Tile";
+import Tile from "../Tiles/Tile";
 
 export default class Scene {
 

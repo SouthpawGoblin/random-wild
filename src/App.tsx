@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import _ from 'lodash'
 import GridCanvas from './components/GridCanvas'
 import styles from './assets/styles/App.module.scss';
-import Scene from './assets/engine/Scene';
-import Tile from './assets/engine/Tile';
-import Renderer from './assets/engine/Renderer';
-import Controller from './assets/engine/Controller';
+import Scene from './engines/Graphic2D/Scene';
+import Tile from './engines/Tiles/Tile';
+import Renderer from './engines/Graphic2D/Renderer';
+import Controller from './engines/Graphic2D/Controller';
 
 const App: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
